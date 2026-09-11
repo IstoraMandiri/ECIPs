@@ -1,0 +1,11 @@
+# Netlify deploy previews for pull requests.
+# Netlify runs `bundle install` automatically when a Gemfile is present, so the
+# build command only needs the Jekyll step. Flags match .github/workflows/jekyll.yml.
+[build]
+  command = "bundle exec jekyll build --future"
+  publish = "_site"
+
+[build.environment]
+  # Matches the Ruby pinned in .github/workflows/*.yml and .ruby-version.
+  RUBY_VERSION = "3.2.9"
+  JEKYLL_ENV = "production"
