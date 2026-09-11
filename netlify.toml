@@ -1,11 +1,22 @@
-# Netlify deploy previews for pull requests.
-# Netlify runs `bundle install` automatically when a Gemfile is present, so the
-# build command only needs the Jekyll step. Flags match .github/workflows/jekyll.yml.
+# Netlify: pull request deploy previews only.
+#
+# The production site is served by GitHub Pages. Netlify is used solely to
+# build a preview for each pull request, so every other deploy context
+# (production, branch-deploy) is skipped via the ignore command below. The
+# ignore command runs before the build; exit 0 means "skip this deploy".
 [build]
-  command = "bundle exec jekyll build --future"
+  # Install gems explicitly. Netlify does this itself for git-triggered
+  # builds, but builds started through the Netlify CLI or agent skip that
+  # phase and fail with "bundler: command not found: jekyll".
+  command = "bundle install && bundle exec jekyll build --future"
   publish = "_site"
+  ignore = "test \"$CONTEXT\" != \"deploy-preview\""
 
 [build.environment]
   # Matches the Ruby pinned in .github/workflows/*.yml and .ruby-version.
   RUBY_VERSION = "3.2.9"
+  # Gemfile.lock currently says BUNDLED WITH 2.1.4, which crashes with
+  # SystemStackError on Ruby 3.x. Force the Bundler that ships with Ruby
+  # 3.2.9 instead. Remove once the lockfile is regenerated (see PR #583).
+  BUNDLER_VERSION = "2.4.19"
   JEKYLL_ENV = "production"
