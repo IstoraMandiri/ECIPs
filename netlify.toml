@@ -19,4 +19,10 @@
   # SystemStackError on Ruby 3.x. Force the Bundler that ships with Ruby
   # 3.2.9 instead. Remove once the lockfile is regenerated (see PR #583).
   BUNDLER_VERSION = "2.4.19"
-  JEKYLL_ENV = "production"
+  # Keep Jekyll in development mode, as the CI workflows do. With
+  # JEKYLL_ENV=production, jekyll-github-metadata (pulled in by github-pages)
+  # rewrites site.baseurl from the GitHub Pages API, and when that lookup
+  # fails on Netlify it falls back to /pages/<owner>/<repo>, which breaks
+  # every link and stylesheet in the preview. Set explicitly so a UI-level
+  # env var cannot override it.
+  JEKYLL_ENV = "development"
